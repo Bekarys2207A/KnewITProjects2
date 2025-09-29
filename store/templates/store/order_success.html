@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Спасибо за заказ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2ecc71;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 16px;
+            color: white;
+            background-color: #3498db;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        a:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Спасибо за заказ!</h1>
+        <p>Ваш заказ <strong>#{{ order.id }}</strong> успешно оформлен 🎉</p>
+        <a href="{% url 'product_list' %}">Вернуться к покупкам</a>
+    </div>
+</body>
+</html>

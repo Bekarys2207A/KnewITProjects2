@@ -1,0 +1,185 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Магазин</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background: #222;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        header a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 30px auto;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .filters input, .filters select, .filters button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filters button {
+            background: #222;
+            color: white;
+            cursor: pointer;
+            border: none;
+        }
+
+        .filters button:hover {
+            background: #444;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .product-card h3 {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #222;
+        }
+
+        .product-card p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .cart-link {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .cart-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .cart-link a:hover {
+            background: #444;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div><a href="{% url 'product_list' %}">🏪 Магазин</a></div>
+    <div>
+        {% if user.is_authenticated %}
+            Привет, {{ user.username }}
+            <form method="post" action="{% url 'logout' %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" style="background:none;border:none;color:white;cursor:pointer;">Выйти</button>
+            </form>
+        {% else %}
+            <a href="{% url 'login' %}">Войти</a> | <a href="{% url 'register' %}">Регистрация</a>
+        {% endif %}
+    </div>
+</header>
+
+<div class="container">
+    <div class="filters">
+        <form method="get">
+            <input type="text" name="q" placeholder="Поиск..." value="{{ request.GET.q }}">
+            <button type="submit">Найти</button>
+        </form>
+
+        <form method="get">
+            <select name="category" onchange="this.form.submit()">
+                <option value="">Все категории</option>
+                {% for c in categories %}
+                    <option value="{{ c.id }}" {% if request.GET.category == c.id|stringformat:"s" %}selected{% endif %}>
+                        {{ c.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="products">
+        {% for product in products %}
+            <div class="product-card">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                {% endif %}
+                <h3><a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a></h3>
+                <p>{{ product.price }} ₸</p>
+                <p>
+                    Рейтинг:
+                    {% if product.get_average_rating %}
+                        ⭐ {{ product.get_average_rating }}/5
+                    {% else %}
+                        Нет оценок
+                    {% endif %}
+                </p>
+            </div>
+        {% empty %}
+            <p>Нет товаров</p>
+        {% endfor %}
+    </div>
+
+    <div class="cart-link">
+        <a href="{% url 'cart_detail' %}">🛒 Моя корзина</a>
+    </div>
+</div>
+</body>
+</html>
